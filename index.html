@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PyHSS</title>
+  <meta name="description" content="PyHSS is an open source Home Subscriber Server, EIR and PCRF written in Python, implementing Diameter and 3GPP interfaces for LTE and IMS.">
+  <link rel="icon" href="assets/shelly.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <img class="logo" src="assets/shelly.png" alt="Shelly, the PyHSS snake">
+  <h1>PyHSS</h1>
+  <p class="tagline">A Diameter Home Subscriber Server written in Python.</p>
+
+  <nav>
+    <a href="#interfaces">interfaces</a>
+    <a href="#install">install</a>
+    <a href="#services">services</a>
+    <a href="https://github.com/nickvsnetworking/pyhss/tree/master/docs">docs</a>
+    <a href="https://github.com/nickvsnetworking/pyhss">source</a>
+  </nav>
+
+  <p>
+    PyHSS is the subscriber database and policy side of an LTE (4G) core
+    network. It can act as a standard or VoLTE HSS, an Equipment Identity
+    Register, a PCRF and a GMLC peer, and serves 2G/3G Osmocom components
+    over GSUP.
+    Subscribers live in MySQL, PostgreSQL or SQLite and are managed through a
+    REST API. It exports Prometheus metrics and supports geographic
+    redundancy between instances.
+  </p>
+
+  <h2 id="interfaces">Interfaces</h2>
+  <dl>
+    <dt>Diameter base</dt><dd>Capabilities exchange, device watchdog, disconnect peer.</dd>
+    <dt>S6a</dt><dd>MME to HSS: authentication, update location, purge, notify. HSS to MME: cancel location, delete subscriber data.</dd>
+    <dt>S13</dt><dd>MME to EIR: ME identity check.</dd>
+    <dt>Cx</dt><dd>I-CSCF and S-CSCF to HSS: user authorization, server assignment, location info, multimedia auth. HSS to S-CSCF: registration termination.</dd>
+    <dt>Sh</dt><dd>Application server access to IMS and XCAP data.</dd>
+    <dt>SLh</dt><dd>GMLC lookup of the subscriber's serving MME.</dd>
+    <dt>Rx</dt><dd>P-CSCF to PCRF: AA and session termination, triggering Gx re-auth for dedicated bearers.</dd>
+    <dt>Gx</dt><dd>Credit control and re-auth, including installing charging rules on demand.</dd>
+  </dl>
+
+  <h2 id="install">Install</h2>
+  <p>The quickest way is Docker Compose, which starts the Diameter, HSS, API and GSUP services and Redis, bound to localhost, with an SQLite database:</p>
+  <pre><code>git clone https://github.com/nickvsnetworking/pyhss.git
+cd pyhss/docker
+docker compose up --build -d</code></pre>
+  <p>
+    A prebuilt image of the current master branch is available. It is
+    rebuilt on every push, so pin it by digest if you use it:
+  </p>
+  <pre><code>docker pull ghcr.io/nickvsnetworking/pyhss/pyhss:latest</code></pre>
+  <p>
+    For production, use the Debian and Ubuntu packages from the
+    <a href="https://github.com/nickvsnetworking/pyhss/releases">releases page</a>,
+    or build the image from a release tag:
+  </p>
+  <pre><code>git checkout 2.0.1
+docker build -f docker/Dockerfile -t pyhss:2.0.1 .</code></pre>
+  <p>
+    Set the bind address, Diameter hostname, realm, PLMN and transport in
+    <code>config.yaml</code>. TCP is the production-tested transport; SCTP
+    works but is experimental. In Docker, most options can be set through
+    the environment variables in <code>docker/.env</code>, which fill the
+    <code>docker/config.yaml</code> template.
+    The API listens on port 8080 and serves Swagger documentation under
+    <code>/docs/</code>:
+  </p>
+  <img class="shot" src="assets/PyHSS_API_Swagger.gif" alt="Swagger UI of the PyHSS API" loading="lazy">
+
+  <h2 id="services">Services</h2>
+  <p>Each service does one job; they communicate over Redis.</p>
+  <dl>
+    <dt>diameterService</dt><dd>Diameter transport and peer state.</dd>
+    <dt>hssService</dt><dd>Request decoding, encoding and HSS logic.</dd>
+    <dt>apiService</dt><dd>REST API for provisioning.</dd>
+    <dt>gsupService</dt><dd>GSUP for 2G/3G Osmocom components.</dd>
+    <dt>georedService</dt><dd>Geo-redundancy messages and webhooks.</dd>
+    <dt>databaseService</dt><dd>Experimental: copies MySQL/PostgreSQL tables into Redis; not used by the other services yet.</dd>
+    <dt>logService</dt><dd>Optional: writes logs queued in Redis to files. Every service also logs to stdout.</dd>
+    <dt>metricService</dt><dd>Prometheus metrics.</dd>
+  </dl>
+
+  <footer>
+    Licensed under the AGPL-3.0-or-later.
+    <a href="https://github.com/nickvsnetworking/pyhss">github.com/nickvsnetworking/pyhss</a>
+  </footer>
+</main>
+</body>
+</html>
