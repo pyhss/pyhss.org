@@ -18,8 +18,8 @@
     <a href="#interfaces">interfaces</a>
     <a href="#install">install</a>
     <a href="#services">services</a>
-    <a href="https://github.com/nickvsnetworking/pyhss/tree/master/docs">docs</a>
-    <a href="https://github.com/nickvsnetworking/pyhss">source</a>
+    <a href="https://github.com/pyhss/pyhss/tree/master/docs">docs</a>
+    <a href="https://github.com/pyhss/pyhss">source</a>
   </nav>
 
   <p>
@@ -46,17 +46,17 @@
 
   <h2 id="install">Install</h2>
   <p>The quickest way is Docker Compose, which starts the Diameter, HSS, API and GSUP services and Redis, bound to localhost, with an SQLite database:</p>
-  <pre><code>git clone https://github.com/nickvsnetworking/pyhss.git
+  <pre><code>git clone https://github.com/pyhss/pyhss.git
 cd pyhss/docker
 docker compose up --build -d</code></pre>
   <p>
     A prebuilt image of the current master branch is available. It is
     rebuilt on every push, so pin it by digest if you use it:
   </p>
-  <pre><code>docker pull ghcr.io/nickvsnetworking/pyhss/pyhss:latest</code></pre>
+  <pre><code>docker pull ghcr.io/pyhss/pyhss/pyhss:latest</code></pre>
   <p>
     For production, use the Debian and Ubuntu packages from the
-    <a href="https://github.com/nickvsnetworking/pyhss/releases">releases page</a>,
+    <a href="https://github.com/pyhss/pyhss/releases">releases page</a>,
     or build the image from a release tag:
   </p>
   <pre><code>git checkout 2.0.1
@@ -99,7 +99,7 @@ docker build -f docker/Dockerfile -t pyhss:2.0.1 .</code></pre>
 
   <footer>
     Licensed under the AGPL-3.0-or-later.
-    <a href="https://github.com/nickvsnetworking/pyhss">github.com/nickvsnetworking/pyhss</a>
+    <a href="https://github.com/pyhss/pyhss">github.com/pyhss/pyhss</a>
   </footer>
 </main>
 </body>
